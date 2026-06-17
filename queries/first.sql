@@ -1,3 +1,6 @@
+drop table Foo;
 create table Foo (
-id number
+one char,
+two varchar,
+aText text(10)
 );

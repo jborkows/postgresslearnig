@@ -1,0 +1,16 @@
+-- Show query timing
+\timing on
+
+-- Expanded display for wide results
+\x auto
+
+-- Set null display
+\pset null '(NULL)'
+
+-- Wrap long lines
+\pset format wrapped
+\pset columns 200
+
+-- Helpful shortcuts
+-- \dt+ *.*           -- List all tables with sizes
+-- \df+ *.*           -- List all functions

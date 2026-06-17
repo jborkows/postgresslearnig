@@ -40,3 +40,9 @@ vim.api.nvim_create_autocmd("FileType", {
 		vim.keymap.set("v", "<F8>", ":'<,'>DB<CR>", { silent = true, buffer = true, desc = "Execute selected SQL" })
 	end,
 })
+
+vim.keymap.set({ "x", "o" }, "an", function()
+	if vim.treesitter.get_parser(nil, nil, { error = false }) then
+		require("vim.treesitter._select").select_parent(vim.v.count1)
+	end
+end, { desc = "Select parent treesitter node or outer incremental lsp selections" })
