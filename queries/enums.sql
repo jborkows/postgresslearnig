@@ -35,7 +35,7 @@ select * from (select value::OrderingByPossitionInEnum from "values") order by 1
  X-Large
 */
 
-alter TYPE OrderingByPossitionInEnum add value 'VerySmall' before 'Small'; -- can add type to it
+alter TYPE OrderingByPossitionInEnum add value 'VerySmall' before 'Small'; -- can add type to it, there is also after
 
 with values as (
 select 'Small' value union
@@ -45,3 +45,39 @@ select 'VerySmall' value union
 select 'X-Large' value 
 )
 select * from (select value::OrderingByPossitionInEnum from "values") order by 1;
+
+create type EnumExampleOne as enum ('A', 'B', 'C');
+
+create table UsingExampleOne (
+   value EnumExampleOne
+);
+
+insert into UsingExampleOne values ('A');
+insert into UsingExampleOne values ('B');
+insert into UsingExampleOne values ('C');
+
+create type SmallerEnum as enum ('A', 'B');
+
+begin
+   update UsingExampleOne
+   set value = 'B'
+   where value = 'C';
+
+   alter table UsingExampleOne 
+   alter column value type SmallerEnum 
+   using value::text::SmallerEnum;
+end;
+
+select * from pg_catalog.pg_enum;
+select enum_range(null, 'C'::EnumExampleOne); -- show all till 'C'
+select enum_range('B'::EnumExampleOne, 'C'::EnumExampleOne); -- show all from B to C
+
+  SELECT
+      e.enumlabel AS value,
+      e.enumsortorder AS sort_key,
+      ROW_NUMBER() OVER (ORDER BY e.enumsortorder) AS position
+  FROM pg_catalog.pg_enum e
+  JOIN pg_catalog.pg_type t ON t.oid = e.enumtypid
+  WHERE lower(t.typname) = 'enumexampleone'
+  ORDER BY e.enumsortorder;
+
