@@ -110,6 +110,16 @@ SELECT
 FROM generate_series(1, 1000000) AS n;
 
 --
+-- Add is_pro flag to users (4% chance of being true)
+--
+
+ALTER TABLE users ADD COLUMN is_pro boolean NOT NULL DEFAULT false;
+
+UPDATE users
+SET is_pro = true
+WHERE random() < 0.04;
+
+--
 -- Generate orders
 --
 

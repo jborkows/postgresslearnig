@@ -52,3 +52,7 @@ explain select * from users where birth_date = '2024-03-15';
 explain select * from users where birth_date < '2024-03-15'; -- not using index
 explain select * from users where birth_date > '2024-03-15'; -- using index
 explain select * from users where birth_date BETWEEN '2024-03-15' and '2024-05-05'; -- using index
+
+select * from users;
+select count(distinct is_pro)::decimal / count(*)::decimal from users; -- 0.00000...
+select count(*) filter(where is_pro is true)::decimal / count(*)::decimal from users; -- 0.0396 even if column has low selectivity, access pattern makes it a good index if asking for is_pro = true users
