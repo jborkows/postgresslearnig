@@ -120,6 +120,18 @@ SET is_pro = true
 WHERE random() < 0.04;
 
 --
+-- Add first_name and last_name to users
+--
+
+ALTER TABLE users ADD COLUMN first_name character varying(255);
+ALTER TABLE users ADD COLUMN last_name character varying(255);
+
+UPDATE users
+SET
+    first_name = (ARRAY['John','Jane','Alex','Sarah','Michael','Emily','David','Emma','James','Olivia'])[1 + (random() * 9)::int],
+    last_name = (ARRAY['Smith','Johnson','Williams','Brown','Jones','Garcia','Miller','Davis','Rodriguez','Martinez'])[1 + (random() * 9)::int];
+
+--
 -- Generate orders
 --
 
