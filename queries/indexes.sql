@@ -208,3 +208,26 @@ explain select * from users  order by birth_date desc nulls last, created_at asc
 --  Limit  (cost=0.42..2.20 rows=10 width=123)
 --    ->  Index Scan using users_dates on users  (cost=0.42..177003.57 rows=1000000 width=123)
 -- (2 rows)
+
+create index users_functional_index on users((split_part(email, '@', 2)));
+explain select * from users where  split_part(email, '@', 2) = 'beer.com';
+
+--                                        QUERY PLAN                                        
+-- -----------------------------------------------------------------------------------------
+--  Bitmap Heap Scan on users  (cost=59.17..13839.33 rows=5000 width=123)
+--    Recheck Cond: (split_part((email)::text, '@'::text, 2) = 'beer.com'::text)
+--    ->  Bitmap Index Scan on users_functional_index  (cost=0.00..57.92 rows=5000 width=0)
+--          Index Cond: (split_part((email)::text, '@'::text, 2) = 'beer.com'::text)
+-- (4 rows)
+
+drop index users_functional_index;
+create index user_email_lower on users((lower(email)));
+explain select * from users where lower(email) = lower('user1@example.com'); --index used
+explain select * from users where lower(email) like 'user1%'; --index not used
+drop index user_email_lower;
+create index users_email_btree on users using btree(email);
+create index users_email_hash on users using hash(email); -- postgres keeps hash values is kept as hash so only strict equality
+
+explain select * from users where email = 'user1@example.com'; --hash index used it is faster for equality
+explain select * from users where email like 'user1@example%'; --no index was used
+

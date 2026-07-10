@@ -25,3 +25,23 @@ with complex_json as (
    }'::jsonb anJson
 )
 select anJson->'string' quoted_string, anJson->>'string' unquoted_string, anJson->'object'->>'key', anJson->'array'->1 from complex_json;
+
+
+
+select * from json_to_recordset('
+[ 
+   {
+     "a":1,
+     "b":"aaa"
+   }
+]
+') as x(a int, b text);
+
+select * from jsonb_to_recordset('
+[ 
+   {
+     "a":1,
+     "b":"aaa"
+   }
+]
+'::jsonb) as x(a int, b text);
